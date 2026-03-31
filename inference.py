@@ -1,8 +1,6 @@
 import os
 from openai import OpenAI
 from env.environment import CyberSOCEnv
-from dotenv import load_dotenv
-load_dotenv()
 
 client = OpenAI(
     base_url=os.getenv("API_BASE_URL"),
@@ -11,38 +9,42 @@ client = OpenAI(
 
 env = CyberSOCEnv()
 
+episodes = 5
 total_score = 0
-episodes = 10
 
 for i in range(episodes):
 
     state = env.reset()
+    done = False
 
-    prompt = f"""
-    Security Alert:
-    type:{state.alert_type}
-    failed_logins:{state.failed_logins}
-    malware:{state.malware_detected}
-    traffic:{state.network_traffic}
-    severity:{state.severity}
+    while not done:
 
-    Choose action number:
-    0 ignore
-    1 investigate_logs
-    2 block_ip
-    3 isolate_host
-    4 escalate_incident
-    """
+        prompt = f"""
+        Security Alert:
+        type:{state.alert_type}
+        failed_logins:{state.failed_logins}
+        malware:{state.malware_detected}
+        traffic:{state.network_traffic}
+        severity:{state.severity}
 
-    response = client.chat.completions.create(
-        model=os.getenv("MODEL_NAME"),
-        messages=[{"role":"user","content":prompt}]
-    )
+        Choose action number:
 
-    action = int(response.choices[0].message.content.strip())
+        0 ignore
+        1 investigate_logs
+        2 block_ip
+        3 isolate_host
+        4 escalate_incident
+        """
 
-    state, reward, done, _ = env.step(action)
+        response = client.chat.completions.create(
+            model=os.getenv("MODEL_NAME"),
+            messages=[{"role":"user","content":prompt}]
+        )
 
-    total_score += reward.value
+        action = int(response.choices[0].message.content.strip())
+
+        state, reward, done, _ = env.step(action)
+
+        total_score += reward.value
 
 print("Baseline score:", total_score/episodes)
