@@ -1,0 +1,22 @@
+name: cybersoc-openenv
+
+description: |
+  A cybersecurity incident response environment simulating SOC alerts.
+  Agents must respond to security incidents like brute force attacks,
+  malware infections, and data exfiltration.
+
+observation_space:
+  alert_type: string
+  failed_logins: int
+  malware_detected: bool
+  network_traffic: int
+  severity: int
+
+action_space:
+  type: discrete
+  size: 5
+
+tasks:
+  - easy
+  - medium
+  - hard
