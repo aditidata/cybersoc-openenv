@@ -3,6 +3,9 @@ from env.environment import CyberSOCEnv
 
 app = FastAPI()
 env = CyberSOCEnv()
+@app.get("/")
+def home():
+    return {"message": "CyberSOC OpenEnv running"}
 
 @app.get("/reset")
 def reset():

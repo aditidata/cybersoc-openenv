@@ -1,6 +1,8 @@
 import os
 from openai import OpenAI
 from env.environment import CyberSOCEnv
+from dotenv import load_dotenv
+load_dotenv()
 
 client = OpenAI(
     base_url=os.getenv("API_BASE_URL"),
